@@ -1,6 +1,18 @@
 # ChalinChalin 3D Coin Pusher (チャリンチャリン 3Dコインプッシャー)
 
-Godot Engine 4.x (4.7+) で開発された、Android 物理コントローラー内蔵型携帯機（RG Rotate / 横縦両対応ディスプレイ）向けの本格3D物理演算コインプッシャーゲームです。
+<div align="center">
+  <img src="icon.png" width="160" alt="ChalinChalin App Icon" style="border-radius: 24px;" />
+  <br />
+  <strong>Android 物理コントローラー内蔵携帯機（RG Rotate）向け 3D物理演算コインプッシャー</strong>
+</div>
+
+---
+
+## 📱 実機スクリーンショット (RG Rotate / 720 × 720)
+
+<div align="center">
+  <img src="screenshots/rg_rotate_gameplay.png" width="480" alt="RG Rotate Gameplay Screenshot" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);" />
+</div>
 
 ---
 
@@ -9,9 +21,10 @@ Godot Engine 4.x (4.7+) で開発された、Android 物理コントローラー
 1. **3D物理演算コインプッシャー**:
    - 2段構造のアーケードステージ（上段・下段）
    - `AnimatableBody3D` による2段押し出しプッシャー（上段スライダー + 下段コイン直接押し出しフロントブレード）
+   - 背後ガードスロープにより、投下したコインが奥に落ちることなく確実に盤面手前へ誘導
    - `RigidBody3D` 物理コイン（ゴールド金貨、シルバー銀貨、レアネオンルビー金貨）
    - 突き抜け防止（Continuous Collision Detection）、スリープ最適化による高パフォーマンス（60FPS維持）
-   - コイン上限管理システム（最大120枚）
+   - 画面内コイン上限管理システム（最大120枚）
 
 2. **ゲームルール**:
    - シューターを左右に動かし、コインをステージ上段に投下。

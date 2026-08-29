@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=25 format=3]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_stage"]
 friction = 0.45
@@ -31,6 +31,12 @@ size = Vector3(4.8, 2.0, 0.4)
 albedo_color = Color(0.08, 0.09, 0.14, 1)
 metallic = 0.5
 roughness = 0.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_back_slope"]
+size = Vector3(3.2, 0.2, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_back_slope"]
+size = Vector3(3.2, 0.2, 1.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_side_wall"]
 size = Vector3(0.3, 1.8, 6.4)
@@ -118,6 +124,15 @@ shape = SubResource("BoxShape3D_back_wall")
 [node name="BackWallMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, -3.45)
 mesh = SubResource("BoxMesh_back_wall")
+surface_material_override/0 = SubResource("StandardMaterial3D_back_wall")
+
+[node name="BackSlopeCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 1.1, -2.95)
+shape = SubResource("BoxShape3D_back_slope")
+
+[node name="BackSlopeMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 1.1, -2.95)
+mesh = SubResource("BoxMesh_back_slope")
 surface_material_override/0 = SubResource("StandardMaterial3D_back_wall")
 
 [node name="LeftWallCollision" type="CollisionShape3D" parent="."]

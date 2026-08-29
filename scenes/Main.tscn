@@ -65,7 +65,7 @@ fov = 46.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
 
 [node name="CoinShooter" parent="." instance=ExtResource("4_shooter")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -2.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -1.9)
 
 [node name="CoinContainer" type="Node3D" parent="."]
 
