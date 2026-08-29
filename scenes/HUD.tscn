@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/HUD.gd" id="1_script"]
 
@@ -13,6 +13,32 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot_panel"]
+bg_color = Color(0.06, 0.08, 0.14, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1.0, 0.75, 0.1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(1, 0.7, 0, 0.3)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reel"]
+bg_color = Color(0.12, 0.15, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.35, 0.5, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guide"]
 bg_color = Color(0.05, 0.06, 0.1, 0.75)
@@ -37,68 +63,155 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 74.0
 grow_horizontal = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 24
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
 
 [node name="HBox" type="HBoxContainer" parent="TopBar"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 10
+alignment = 1
 
 [node name="CoinPanel" type="PanelContainer" parent="TopBar/HBox"]
-custom_minimum_size = Vector2(280, 52)
+custom_minimum_size = Vector2(190, 52)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="HBox" type="HBoxContainer" parent="TopBar/HBox/CoinPanel"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 alignment = 1
 
 [node name="Icon" type="Label" parent="TopBar/HBox/CoinPanel/HBox"]
 layout_mode = 2
-theme_override_font_size = 22
+theme_override_font_size = 20
 text = "🪙"
 
 [node name="Title" type="Label" parent="TopBar/HBox/CoinPanel/HBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
-theme_override_font_size = 16
+theme_override_font_size = 14
 text = "COINS:"
 
 [node name="CoinLabel" type="Label" parent="TopBar/HBox/CoinPanel/HBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_size = 22
+theme_override_font_size = 20
 text = "50"
 
+[node name="SlotPanel" type="PanelContainer" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(250, 52)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot_panel")
+
+[node name="VBox" type="VBoxContainer" parent="TopBar/HBox/SlotPanel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="ReelsContainer" type="HBoxContainer" parent="TopBar/HBox/SlotPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Reel1Panel" type="PanelContainer" parent="TopBar/HBox/SlotPanel/VBox/ReelsContainer"]
+custom_minimum_size = Vector2(46, 32)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reel")
+
+[node name="Reel1Label" type="Label" parent="TopBar/HBox/SlotPanel/VBox/ReelsContainer/Reel1Panel"]
+layout_mode = 2
+theme_override_font_size = 20
+text = "7️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Reel2Panel" type="PanelContainer" parent="TopBar/HBox/SlotPanel/VBox/ReelsContainer"]
+custom_minimum_size = Vector2(46, 32)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reel")
+
+[node name="Reel2Label" type="Label" parent="TopBar/HBox/SlotPanel/VBox/ReelsContainer/Reel2Panel"]
+layout_mode = 2
+theme_override_font_size = 20
+text = "7️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Reel3Panel" type="PanelContainer" parent="TopBar/HBox/SlotPanel/VBox/ReelsContainer"]
+custom_minimum_size = Vector2(46, 32)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reel")
+
+[node name="Reel3Label" type="Label" parent="TopBar/HBox/SlotPanel/VBox/ReelsContainer/Reel3Panel"]
+layout_mode = 2
+theme_override_font_size = 20
+text = "7️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StockContainer" type="HBoxContainer" parent="TopBar/HBox/SlotPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Stock1" type="Label" parent="TopBar/HBox/SlotPanel/VBox/StockContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.35, 0.45, 1)
+theme_override_font_size = 10
+text = "●"
+
+[node name="Stock2" type="Label" parent="TopBar/HBox/SlotPanel/VBox/StockContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.35, 0.45, 1)
+theme_override_font_size = 10
+text = "●"
+
+[node name="Stock3" type="Label" parent="TopBar/HBox/SlotPanel/VBox/StockContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.35, 0.45, 1)
+theme_override_font_size = 10
+text = "●"
+
+[node name="Stock4" type="Label" parent="TopBar/HBox/SlotPanel/VBox/StockContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.35, 0.45, 1)
+theme_override_font_size = 10
+text = "●"
+
+[node name="Stock5" type="Label" parent="TopBar/HBox/SlotPanel/VBox/StockContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.35, 0.45, 1)
+theme_override_font_size = 10
+text = "●"
+
 [node name="ScorePanel" type="PanelContainer" parent="TopBar/HBox"]
-custom_minimum_size = Vector2(340, 52)
+custom_minimum_size = Vector2(230, 52)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="HBox" type="HBoxContainer" parent="TopBar/HBox/ScorePanel"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 alignment = 1
 
 [node name="Icon" type="Label" parent="TopBar/HBox/ScorePanel/HBox"]
 layout_mode = 2
-theme_override_font_size = 20
+theme_override_font_size = 18
 text = "⭐"
 
 [node name="Title" type="Label" parent="TopBar/HBox/ScorePanel/HBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
-theme_override_font_size = 16
+theme_override_font_size = 14
 text = "SCORE:"
 
 [node name="ScoreLabel" type="Label" parent="TopBar/HBox/ScorePanel/HBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_size = 20
+theme_override_font_size = 18
 text = "000000"
 
 [node name="BottomBar" type="MarginContainer" parent="."]

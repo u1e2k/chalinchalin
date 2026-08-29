@@ -14,7 +14,11 @@ enum SfxType {
 	GAME_OVER,
 	UI_FOCUS,
 	UI_SELECT,
-	BUTTON_CLICK
+	BUTTON_CLICK,
+	SLOT_CHECKER,
+	SLOT_STOP,
+	SLOT_WIN,
+	COIN_SHOWER
 }
 
 static var _cached_wavs: Dictionary = {}
@@ -183,6 +187,60 @@ static func _generate_stream(type: SfxType) -> AudioStreamWAV:
 				var freq := 1200.0
 				var env := exp(-t * 50.0)
 				var wave := sin(TAU * freq * t)
+				var sample_val := int(clampf(wave * env * 0.5, -1.0, 1.0) * 32767.0)
+				buffer.encode_s16(i * 2, sample_val)
+
+		SfxType.SLOT_CHECKER:
+			# Bright arcade chime for passing checker (D6 -> A6)
+			duration = 0.22
+			var samples := int(sample_rate * duration)
+			buffer.resize(samples * 2)
+			for i in range(samples):
+				var t := float(i) / sample_rate
+				var freq := 1174.66 if t < 0.10 else 1760.0
+				var env := exp(-fmod(t, 0.10) * 16.0)
+				var wave := sin(TAU * freq * t) + 0.3 * sin(TAU * freq * 2.0 * t)
+				var sample_val := int(clampf(wave * env * 0.65, -1.0, 1.0) * 32767.0)
+				buffer.encode_s16(i * 2, sample_val)
+
+		SfxType.SLOT_STOP:
+			# Mechanical reel click / clunk
+			duration = 0.08
+			var samples := int(sample_rate * duration)
+			buffer.resize(samples * 2)
+			for i in range(samples):
+				var t := float(i) / sample_rate
+				var freq := 900.0 - 400.0 * (float(i) / samples)
+				var env := exp(-t * 45.0)
+				var wave := sin(TAU * freq * t) + 0.4 * (randf() * 2.0 - 1.0)
+				var sample_val := int(clampf(wave * env * 0.6, -1.0, 1.0) * 32767.0)
+				buffer.encode_s16(i * 2, sample_val)
+
+		SfxType.SLOT_WIN:
+			# Grand fanfare for jackpot/match
+			duration = 0.75
+			var samples := int(sample_rate * duration)
+			buffer.resize(samples * 2)
+			var notes := [523.25, 659.25, 783.99, 1046.50, 1318.51, 2093.00]
+			for i in range(samples):
+				var t := float(i) / sample_rate
+				var note_idx := clampi(int(t / 0.11), 0, notes.size() - 1)
+				var freq: float = notes[note_idx]
+				var env := exp(-fmod(t, 0.11) * 10.0)
+				var wave := sin(TAU * freq * t) + 0.35 * sin(TAU * freq * 2.0 * t)
+				var sample_val := int(clampf(wave * env * 0.75, -1.0, 1.0) * 32767.0)
+				buffer.encode_s16(i * 2, sample_val)
+
+		SfxType.COIN_SHOWER:
+			# Rapid arcade coins rattling / direct payout rain
+			duration = 0.12
+			var samples := int(sample_rate * duration)
+			buffer.resize(samples * 2)
+			for i in range(samples):
+				var t := float(i) / sample_rate
+				var freq := 2000.0 + sin(t * 120.0) * 800.0
+				var env := exp(-t * 25.0)
+				var wave := sin(TAU * freq * t) + 0.3 * sin(TAU * freq * 2.5 * t)
 				var sample_val := int(clampf(wave * env * 0.5, -1.0, 1.0) * 32767.0)
 				buffer.encode_s16(i * 2, sample_val)
 

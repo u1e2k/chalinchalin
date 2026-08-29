@@ -8,12 +8,28 @@ extends Control
 @onready var combo_label: Label = $CenterNotify/ComboLabel
 @onready var control_guide: Label = $BottomBar/Panel/GuideLabel
 
+# Slot UI Nodes
+@onready var slot_panel: PanelContainer = $TopBar/HBox/SlotPanel
+@onready var reel_labels: Array[Label] = [
+	$TopBar/HBox/SlotPanel/VBox/ReelsContainer/Reel1Panel/Reel1Label,
+	$TopBar/HBox/SlotPanel/VBox/ReelsContainer/Reel2Panel/Reel2Label,
+	$TopBar/HBox/SlotPanel/VBox/ReelsContainer/Reel3Panel/Reel3Label
+]
+@onready var stock_lamps: Array[Label] = [
+	$TopBar/HBox/SlotPanel/VBox/StockContainer/Stock1,
+	$TopBar/HBox/SlotPanel/VBox/StockContainer/Stock2,
+	$TopBar/HBox/SlotPanel/VBox/StockContainer/Stock3,
+	$TopBar/HBox/SlotPanel/VBox/StockContainer/Stock4,
+	$TopBar/HBox/SlotPanel/VBox/StockContainer/Stock5
+]
+
 var _current_coins: int = 50
 var _current_score: int = 0
 
 func _ready() -> void:
 	update_coins(50)
 	update_score(0)
+	update_stock(0)
 
 func update_coins(amount: int, animate: bool = false) -> void:
 	_current_coins = amount
@@ -33,6 +49,38 @@ func update_score(amount: int, animate: bool = false) -> void:
 			score_label.scale = Vector2(1.2, 1.2)
 			tween.tween_property(score_label, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
+func update_stock(count: int) -> void:
+	for i in range(stock_lamps.size()):
+		if stock_lamps[i]:
+			if i < count:
+				stock_lamps[i].modulate = Color(0.0, 1.0, 0.9, 1.0) # Bright neon cyan
+				stock_lamps[i].text = "◆"
+			else:
+				stock_lamps[i].modulate = Color(0.3, 0.35, 0.45, 0.6)
+				stock_lamps[i].text = "◇"
+
+func update_reels(symbols: Array[String]) -> void:
+	for i in range(min(symbols.size(), reel_labels.size())):
+		if reel_labels[i]:
+			reel_labels[i].text = symbols[i]
+
+func play_slot_stop_effect(reel_index: int) -> void:
+	if reel_index < reel_labels.size() and reel_labels[reel_index]:
+		var lbl = reel_labels[reel_index]
+		var tween := create_tween()
+		lbl.scale = Vector2(1.35, 1.35)
+		tween.tween_property(lbl, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func play_slot_win_effect(prize_type: String) -> void:
+	if slot_panel:
+		var tween := create_tween().set_parallel(true)
+		slot_panel.scale = Vector2(1.15, 1.15)
+		tween.tween_property(slot_panel, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		
+	var title_text := "★ JACKPOT! ★" if prize_type == "FEVER_JACKPOT" else "★ WIN! ★"
+	var color := Color(1.0, 0.85, 0.1) if prize_type != "FEVER_JACKPOT" else Color(1.0, 0.2, 0.6)
+	show_floating_text(title_text, color, Vector2(360, 220))
+
 func show_recovery_notice(amount: int = 1) -> void:
 	var label := Label.new()
 	label.text = "⚡ RECOVERY +%d" % amount
@@ -43,7 +91,7 @@ func show_recovery_notice(amount: int = 1) -> void:
 	label.add_theme_constant_override("shadow_offset_y", 1)
 	
 	# Position directly beneath CoinPanel
-	var base_pos := Vector2(80.0, 72.0)
+	var base_pos := Vector2(60.0, 72.0)
 	label.position = base_pos
 	floating_container.add_child(label)
 	

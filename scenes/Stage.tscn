@@ -1,4 +1,6 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/CheckerGate.tscn" id="1_checker"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_stage"]
 friction = 0.45
@@ -172,26 +174,65 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.15, 1.4, -0.6)
 mesh = SubResource("BoxMesh_neon_bar")
 surface_material_override/0 = SubResource("StandardMaterial3D_neon_bar")
 
+# Obstacle Pins on Upper Deck (Staggered Field)
 [node name="Pin1" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.15, -1.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.65, -1.55)
 shape = SubResource("CylinderShape3D_pin")
 
-[node name="Pin1Mesh" type="MeshInstance3D" parent="Pin1"]
+[node name="Pin1Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.65, -1.55)
 mesh = SubResource("CylinderMesh_pin")
 surface_material_override/0 = SubResource("StandardMaterial3D_pin")
 
 [node name="Pin2" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0.15, -1.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.65, -1.55)
 shape = SubResource("CylinderShape3D_pin")
 
-[node name="Pin2Mesh" type="MeshInstance3D" parent="Pin2"]
+[node name="Pin2Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.65, -1.55)
 mesh = SubResource("CylinderMesh_pin")
 surface_material_override/0 = SubResource("StandardMaterial3D_pin")
 
 [node name="Pin3" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.15, -1.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.65, -1.8)
 shape = SubResource("CylinderShape3D_pin")
 
-[node name="Pin3Mesh" type="MeshInstance3D" parent="Pin3"]
+[node name="Pin3Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.65, -1.8)
 mesh = SubResource("CylinderMesh_pin")
 surface_material_override/0 = SubResource("StandardMaterial3D_pin")
+
+[node name="Pin4" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 0.65, -1.35)
+shape = SubResource("CylinderShape3D_pin")
+
+[node name="Pin4Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 0.65, -1.35)
+mesh = SubResource("CylinderMesh_pin")
+surface_material_override/0 = SubResource("StandardMaterial3D_pin")
+
+[node name="Pin5" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.65, -1.35)
+shape = SubResource("CylinderShape3D_pin")
+
+[node name="Pin5Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.65, -1.35)
+mesh = SubResource("CylinderMesh_pin")
+surface_material_override/0 = SubResource("StandardMaterial3D_pin")
+
+# Fixed Slim Left & Right Checker Gates
+[node name="CheckerLeft" parent="." instance=ExtResource("1_checker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.50, -1.35)
+gate_color = Color(0.0, 0.9, 1.0, 1)
+
+[node name="CheckerRight" parent="." instance=ExtResource("1_checker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.50, -1.35)
+gate_color = Color(0.0, 0.9, 1.0, 1)
+
+# Dynamic Moving Center Checker Gate (Left-Right Swing)
+[node name="CheckerCenter" parent="." instance=ExtResource("1_checker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.50, -1.15)
+gate_color = Color(1, 0.85, 0.1, 1)
+is_moving = true
+move_range = 0.5
+move_speed = 1.3

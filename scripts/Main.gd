@@ -23,6 +23,7 @@ var combo_timer: float = 0.0
 var _active_coins: Array[Node3D] = []
 var _recovery_timer: float = 0.0
 
+@onready var stage: Node3D = $Stage
 @onready var coin_shooter: Node3D = $CoinShooter
 @onready var coin_container: Node3D = $CoinContainer
 @onready var pusher: Node3D = $Pusher
@@ -33,6 +34,7 @@ var _recovery_timer: float = 0.0
 @onready var pause_menu: Control = $UI/PauseMenu
 @onready var game_over_menu: Control = $UI/GameOverMenu
 @onready var camera: Camera3D = $Camera3D
+@onready var slot_manager: Node = $SlotManager
 
 var coin_scene: PackedScene = preload("res://scenes/Coin.tscn")
 
@@ -56,6 +58,24 @@ func _ready() -> void:
 		lose_zone_left.coin_dropped.connect(_on_coin_dropped)
 	if lose_zone_right and lose_zone_right.has_signal("coin_dropped"):
 		lose_zone_right.coin_dropped.connect(_on_coin_dropped)
+		
+	# Connect Checker Gates to SlotManager
+	if stage:
+		for checker_name in ["CheckerLeft", "CheckerCenter", "CheckerRight"]:
+			var checker = stage.get_node_or_null(checker_name)
+			if checker and checker.has_signal("coin_passed"):
+				checker.coin_passed.connect(_on_checker_coin_passed)
+				
+	# Connect SlotManager to HUD & Main
+	if slot_manager and hud:
+		if slot_manager.has_signal("stock_changed"):
+			slot_manager.stock_changed.connect(hud.update_stock)
+		if slot_manager.has_signal("reel_updated"):
+			slot_manager.reel_updated.connect(hud.update_reels)
+		if slot_manager.has_signal("reel_stopped"):
+			slot_manager.reel_stopped.connect(func(idx, _sym): hud.play_slot_stop_effect(idx))
+		if slot_manager.has_signal("slot_win"):
+			slot_manager.slot_win.connect(_on_slot_win)
 		
 	if pause_menu:
 		if pause_menu.has_signal("restarted"):
@@ -116,6 +136,42 @@ func _process(delta: float) -> void:
 		if pause_menu and not pause_menu.visible and game_over_menu and not game_over_menu.visible:
 			_save_game()
 			pause_menu.open_menu()
+
+func _on_checker_coin_passed() -> void:
+	if slot_manager and slot_manager.has_method("add_stock"):
+		slot_manager.add_stock()
+
+func _on_slot_win(prize_type: String, prize_coins: int, prize_score: int, _symbols: Array = []) -> void:
+	current_score += prize_score
+	_save_game()
+	
+	if hud:
+		hud.update_score(current_score, true)
+		hud.play_slot_win_effect(prize_type)
+		
+	# Trigger Direct Coin Shower onto the upper pusher deck
+	var is_special := (prize_type == "STAR_SPECIAL")
+	_trigger_coin_shower(prize_coins, is_special)
+
+func _trigger_coin_shower(count: int, is_special: bool) -> void:
+	for i in range(count):
+		var coin: Node3D = coin_scene.instantiate()
+		var x := randf_range(-0.9, 0.9)
+		var z := randf_range(-2.2, -1.6)
+		var y := 2.0 + randf_range(0.1, 0.4)
+		coin.position = Vector3(x, y, z)
+		coin.rotation = Vector3(randf_range(-0.2, 0.2), randf_range(0, TAU), randf_range(-0.2, 0.2))
+		
+		if is_special:
+			coin.set("coin_type", CoinScript.Type.SPECIAL)
+		elif randf() < 0.2:
+			coin.set("coin_type", CoinScript.Type.SILVER)
+			
+		_register_coin(coin)
+		SoundManagerClass.play(SoundManagerClass.SfxType.COIN_SHOWER)
+		
+		# Short stagger between dropped shower coins
+		await get_tree().create_timer(0.08).timeout
 
 func _on_coin_spawned_by_shooter(coin: Node3D) -> void:
 	if current_coins <= 0:
