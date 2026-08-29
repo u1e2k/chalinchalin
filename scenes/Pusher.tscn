@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/Pusher.gd" id="1_script"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pusher"]
+size = Vector3(3.16, 0.4, 1.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pusher"]
+size = Vector3(3.16, 0.4, 1.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pusher"]
+albedo_color = Color(0.22, 0.25, 0.32, 1)
+metallic = 0.85
+roughness = 0.28
+
+[sub_resource type="BoxMesh" id="BoxMesh_stripe"]
+size = Vector3(3.18, 0.06, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stripe"]
+albedo_color = Color(0.0, 0.85, 1.0, 1)
+emission_enabled = true
+emission = Color(0.0, 0.85, 1.0, 1)
+emission_energy_multiplier = 2.0
+
+[node name="Pusher" type="AnimatableBody3D"]
+collision_mask = 2
+sync_to_physics = true
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_pusher")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_pusher")
+surface_material_override/0 = SubResource("StandardMaterial3D_pusher")
+
+[node name="NeonStripe" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0.9)
+mesh = SubResource("BoxMesh_stripe")
+surface_material_override/0 = SubResource("StandardMaterial3D_stripe")

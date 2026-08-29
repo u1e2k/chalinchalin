@@ -1,0 +1,38 @@
+# Godot 4.x specific ignores
+.godot/
+
+# Godot-specific files
+*.translation
+
+# Imported resources and binaries
+*.import
+
+# Mono-specific ignores (if using C# in future)
+.mono/
+data_*/
+mono_crash.*.json
+
+# Exported binaries & packages
+export/
+build/
+bin/
+*.apk
+*.aab
+*.exe
+*.pck
+*.zip
+*.tar.gz
+*.dmg
+*.app
+*.ipa
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*~
