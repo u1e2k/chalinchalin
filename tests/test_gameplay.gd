@@ -27,11 +27,11 @@ func _process(delta: float) -> bool:
 		print("[TEST] Coins after drop: %d" % root_node.current_coins)
 		assert(root_node.current_coins == 49, "Coin should decrease to 49")
 		
-	# Frame 45: Test Tilt
+	# Frame 45: Verify Pusher movement
 	if frame_count == 45:
-		print("[TEST] Triggering Tilt action...")
-		root_node._try_tilt()
-		assert(root_node.tilt_charge == 0.0, "Tilt charge must be reset to 0")
+		var pusher_node = root_node.pusher
+		print("[TEST] Pusher position Z: %f" % pusher_node.global_position.z)
+		assert(pusher_node.global_position.y == 0.0, "Pusher base Y must align with stage floor 0.0")
 		
 	# Frame 65: Test Win Drop Zone simulation
 	if frame_count == 65:

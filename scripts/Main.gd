@@ -6,12 +6,10 @@ const SoundManagerClass = preload("res://scripts/SoundManager.gd")
 
 @export var initial_coins: int = 50
 @export var max_active_coins: int = 120
-@export var tilt_charge_time: float = 6.0
 
 var current_coins: int = 50
 var current_score: int = 0
 var total_coins_won: int = 0
-var tilt_charge: float = 1.0
 var is_game_over: bool = false
 var combo_count: int = 0
 var combo_timer: float = 0.0
@@ -36,7 +34,6 @@ func _ready() -> void:
 	current_coins = initial_coins
 	current_score = 0
 	total_coins_won = 0
-	tilt_charge = 1.0
 	is_game_over = false
 	
 	# Connect signals
@@ -66,7 +63,6 @@ func _ready() -> void:
 	if hud:
 		hud.update_coins(current_coins)
 		hud.update_score(current_score)
-		hud.update_tilt(tilt_charge, true)
 	
 	# Populate board with initial starting coins
 	_spawn_initial_board_coins()
@@ -75,22 +71,12 @@ func _process(delta: float) -> void:
 	if is_game_over or get_tree().paused:
 		return
 		
-	# Recharge Tilt
-	if tilt_charge < 1.0:
-		tilt_charge = minf(tilt_charge + delta / tilt_charge_time, 1.0)
-		if hud:
-			hud.update_tilt(tilt_charge, tilt_charge >= 1.0)
-		
 	# Combo countdown
 	if combo_timer > 0.0:
 		combo_timer -= delta
 		if combo_timer <= 0.0:
 			combo_count = 0
 			
-	# Handle Tilt input
-	if Input.is_action_just_pressed("action_x") or Input.is_action_just_pressed("btn_x"):
-		_try_tilt()
-		
 	# Handle Pause input
 	if Input.is_action_just_pressed("ui_pause") or Input.is_action_just_pressed("btn_start"):
 		if pause_menu and not pause_menu.visible and game_over_menu and not game_over_menu.visible:
@@ -102,40 +88,6 @@ func _process(delta: float) -> void:
 		if _check_game_over_timer >= 1.0:
 			_check_game_over_timer = 0.0
 			_evaluate_game_over()
-
-func _try_tilt() -> void:
-	if tilt_charge < 1.0:
-		return
-		
-	tilt_charge = 0.0
-	if hud:
-		hud.update_tilt(0.0, false)
-		hud.show_floating_text("⚡ TILT!", Color(0.2, 1.0, 1.0), Vector2(360, 360))
-	SoundManagerClass.play(SoundManagerClass.SfxType.TILT_SHAKE)
-	
-	# Shake camera
-	_shake_camera()
-	
-	# Apply impulses to active coins
-	for coin in _active_coins:
-		if is_instance_valid(coin) and not coin.get("is_collected"):
-			var impulse := Vector3(
-				randf_range(-0.35, 0.35),
-				randf_range(0.25, 0.6),
-				randf_range(0.3, 0.9)
-			)
-			if coin.has_method("apply_tilt"):
-				coin.apply_tilt(impulse)
-
-func _shake_camera() -> void:
-	if not camera:
-		return
-	var orig_pos := camera.position
-	var tween := create_tween()
-	for i in range(4):
-		var offset := Vector3(randf_range(-0.06, 0.06), randf_range(-0.04, 0.04), randf_range(-0.05, 0.05))
-		tween.tween_property(camera, "position", orig_pos + offset, 0.05)
-	tween.tween_property(camera, "position", orig_pos, 0.06)
 
 func _on_coin_spawned_by_shooter(coin: Node3D) -> void:
 	if current_coins <= 0:
@@ -188,11 +140,11 @@ func _on_coin_dropped(coin: Node3D, is_win: bool) -> void:
 			
 			var c_type = coin.get("coin_type")
 			if c_type == CoinScript.Type.SPECIAL:
-				tilt_charge = 1.0
-				hud.update_tilt(1.0, true)
-				hud.show_floating_text("★ BONUS! +%d COINS" % gain_coins, Color(1, 0.2, 0.6))
+				hud.show_floating_text("★ SPECIAL! +%d COINS" % gain_coins, Color(1, 0.2, 0.6))
+			elif c_type == CoinScript.Type.SILVER:
+				hud.show_floating_text("+%d COIN" % gain_coins, Color(0.85, 0.9, 1.0))
 			else:
-				hud.show_floating_text("+%d COIN" % gain_coins, Color(1, 0.85, 0.2))
+				hud.show_floating_text("+%d COINS" % gain_coins, Color(1, 0.85, 0.2))
 				
 			if combo_count >= 2:
 				hud.show_combo(combo_count)
@@ -204,7 +156,7 @@ func _on_coin_dropped(coin: Node3D, is_win: bool) -> void:
 		combo_count = 0
 
 func _spawn_initial_board_coins() -> void:
-	# Populate Lower Bed
+	# Populate Lower Bed (Z: -0.8 to 1.6)
 	for i in range(28):
 		var coin: Node3D = coin_scene.instantiate()
 		var x := randf_range(-1.3, 1.3)
@@ -218,7 +170,7 @@ func _spawn_initial_board_coins() -> void:
 			coin.set("coin_type", CoinScript.Type.SPECIAL)
 		_register_coin(coin)
 		
-	# Populate Upper Bed
+	# Populate Upper Bed (Z: -2.8 to -1.8)
 	for i in range(12):
 		var coin: Node3D = coin_scene.instantiate()
 		var x := randf_range(-1.2, 1.2)

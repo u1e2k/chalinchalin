@@ -3,8 +3,6 @@ extends Control
 
 @onready var coin_label: Label = $TopBar/HBox/CoinPanel/HBox/CoinLabel
 @onready var score_label: Label = $TopBar/HBox/ScorePanel/HBox/ScoreLabel
-@onready var tilt_bar: ProgressBar = $TopBar/HBox/TiltPanel/VBox/TiltBar
-@onready var tilt_status: Label = $TopBar/HBox/TiltPanel/VBox/TiltStatus
 @onready var floating_container: Control = $FloatingContainer
 @onready var combo_label: Label = $CenterNotify/ComboLabel
 @onready var control_guide: Label = $BottomBar/Panel/GuideLabel
@@ -15,7 +13,6 @@ var _current_score: int = 0
 func _ready() -> void:
 	update_coins(50)
 	update_score(0)
-	update_tilt(1.0, true)
 
 func update_coins(amount: int, animate: bool = false) -> void:
 	_current_coins = amount
@@ -34,17 +31,6 @@ func update_score(amount: int, animate: bool = false) -> void:
 			var tween := create_tween()
 			score_label.scale = Vector2(1.2, 1.2)
 			tween.tween_property(score_label, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-
-func update_tilt(percent: float, is_ready: bool) -> void:
-	if tilt_bar:
-		tilt_bar.value = percent * 100.0
-	if tilt_status:
-		if is_ready:
-			tilt_status.text = "READY [X]"
-			tilt_status.modulate = Color(0.2, 1.0, 0.4)
-		else:
-			tilt_status.text = "CHARGE %d%%" % int(percent * 100.0)
-			tilt_status.modulate = Color(0.8, 0.8, 0.8)
 
 func show_floating_text(text: String, color: Color = Color.YELLOW, screen_pos: Vector2 = Vector2.ZERO) -> void:
 	var label := Label.new()

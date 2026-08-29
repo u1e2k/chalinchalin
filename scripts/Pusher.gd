@@ -2,9 +2,9 @@ class_name Pusher
 extends AnimatableBody3D
 
 @export var speed: float = 1.2
-@export var stroke: float = 0.65
-@export var center_z: float = -2.1
-@export var base_y: float = 0.45
+@export var stroke: float = 0.55
+@export var center_z: float = -1.8
+@export var base_y: float = 0.0
 
 var _time: float = 0.0
 

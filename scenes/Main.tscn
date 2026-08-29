@@ -62,7 +62,7 @@ fov = 46.0
 [node name="Stage" parent="." instance=ExtResource("2_stage")]
 
 [node name="Pusher" parent="." instance=ExtResource("3_pusher")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -2.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
 
 [node name="CoinShooter" parent="." instance=ExtResource("4_shooter")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -2.6)
