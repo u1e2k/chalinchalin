@@ -1,6 +1,7 @@
 class_name HUD
 extends Control
 
+@onready var coin_panel: PanelContainer = $TopBar/HBox/CoinPanel
 @onready var coin_label: Label = $TopBar/HBox/CoinPanel/HBox/CoinLabel
 @onready var score_label: Label = $TopBar/HBox/ScorePanel/HBox/ScoreLabel
 @onready var floating_container: Control = $FloatingContainer
@@ -31,6 +32,25 @@ func update_score(amount: int, animate: bool = false) -> void:
 			var tween := create_tween()
 			score_label.scale = Vector2(1.2, 1.2)
 			tween.tween_property(score_label, "scale", Vector2.ONE, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func show_recovery_notice(amount: int = 1) -> void:
+	var label := Label.new()
+	label.text = "⚡ RECOVERY +%d" % amount
+	label.modulate = Color(0.25, 1.0, 0.6, 1.0) # Emerald neon
+	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	label.add_theme_constant_override("shadow_offset_x", 1)
+	label.add_theme_constant_override("shadow_offset_y", 1)
+	
+	# Position directly beneath CoinPanel
+	var base_pos := Vector2(80.0, 72.0)
+	label.position = base_pos
+	floating_container.add_child(label)
+	
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(label, "position:y", base_pos.y + 18.0, 0.85).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.85).set_delay(0.2)
+	tween.chain().tween_callback(label.queue_free)
 
 func show_floating_text(text: String, color: Color = Color.YELLOW, screen_pos: Vector2 = Vector2.ZERO) -> void:
 	var label := Label.new()

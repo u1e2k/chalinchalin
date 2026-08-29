@@ -12,14 +12,14 @@ func _process(delta: float) -> bool:
 	if not root_node or not root_node.is_node_ready():
 		return false
 		
-	# Frame 15: Verify initial state
+	# Frame 15: Verify initial state & loaded coins
 	if frame_count == 15:
-		print("[TEST] Initial coins: %d" % root_node.current_coins)
-		assert(root_node.current_coins == 50, "Initial coins must be 50")
+		print("[TEST] Current coins: %d" % root_node.current_coins)
+		assert(root_node.current_coins > 0, "Coins must be positive from save or initial")
 		print("[TEST] Active board coins count: %d" % root_node._active_coins.size())
 		assert(root_node._active_coins.size() == 40, "Initial coins on board should be 40 (28 lower + 12 upper)")
 		
-	# Frame 25: Test Coin Recovery System
+	# Frame 25: Test Coin Recovery System & HUD Notice
 	if frame_count == 25:
 		print("[TEST] Testing Coin Recovery System...")
 		root_node.current_coins = 5
@@ -69,16 +69,26 @@ func _process(delta: float) -> bool:
 			assert(lc.get("is_collected") == true, "Lose coin must be collected/removed")
 		else:
 			print("[TEST] TestLoseCoin has been collected and freed!")
+			
+	# Frame 95: Test SaveManager save and load
+	if frame_count == 95:
+		print("[TEST] Testing SaveManager persistence...")
+		var SaveManagerClass = preload("res://scripts/SaveManager.gd")
+		SaveManagerClass.save_game(77, 12340, 500)
+		var loaded = SaveManagerClass.load_game()
+		assert(loaded["coins"] == 77, "Saved coins should be 77")
+		assert(loaded["high_score"] == 12340, "Saved high score should be 12340")
+		print("[TEST] Persistence save/load test passed!")
 		
-	# Frame 100: Test Pause Menu opening
-	if frame_count == 100:
+	# Frame 105: Test Pause Menu opening
+	if frame_count == 105:
 		print("[TEST] Opening Pause Menu...")
 		root_node.pause_menu.open_menu()
 		assert(root_node.pause_menu.visible == true, "Pause menu should be visible")
 		assert(root.get_tree().paused == true, "Tree should be paused")
 		
-	# Frame 105: Test A button on focused button
-	if frame_count == 105:
+	# Frame 110: Test A button on focused button
+	if frame_count == 110:
 		print("[TEST] Pressing A button on Pause Menu...")
 		var ev := InputEventAction.new()
 		ev.action = "action_accept"
@@ -87,9 +97,9 @@ func _process(delta: float) -> bool:
 		assert(root_node.pause_menu.visible == false, "Pause menu should close on Resume press")
 		assert(root.get_tree().paused == false, "Tree should be unpaused")
 		
-	# Frame 120: Success and quit
-	if frame_count >= 120:
-		print("[TEST] ALL AUTOMATED VERIFICATION TESTS (WINZONE + LOSEZONE) PASSED SUCCESSFULLY!")
+	# Frame 125: Success and quit
+	if frame_count >= 125:
+		print("[TEST] ALL AUTOMATED VERIFICATION TESTS (SAVE/LOAD + RECOVERY + ZONES) PASSED SUCCESSFULLY!")
 		quit(0)
 		return true
 		

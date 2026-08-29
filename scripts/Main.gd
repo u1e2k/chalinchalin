@@ -3,6 +3,7 @@ extends Node3D
 
 const CoinScript = preload("res://scripts/Coin.gd")
 const SoundManagerClass = preload("res://scripts/SoundManager.gd")
+const SaveManagerClass = preload("res://scripts/SaveManager.gd")
 
 @export var initial_coins: int = 50
 @export var max_active_coins: int = 120
@@ -13,6 +14,7 @@ const SoundManagerClass = preload("res://scripts/SoundManager.gd")
 
 var current_coins: int = 50
 var current_score: int = 0
+var high_score: int = 0
 var total_coins_won: int = 0
 var is_game_over: bool = false
 var combo_count: int = 0
@@ -35,9 +37,13 @@ var _recovery_timer: float = 0.0
 var coin_scene: PackedScene = preload("res://scenes/Coin.tscn")
 
 func _ready() -> void:
-	current_coins = initial_coins
+	# Load saved progress (Coins & Stats Persistence)
+	var save_data = SaveManagerClass.load_game()
+	current_coins = save_data.get("coins", initial_coins)
+	high_score = save_data.get("high_score", 0)
+	total_coins_won = save_data.get("total_coins_won", 0)
+	
 	current_score = 0
-	total_coins_won = 0
 	is_game_over = false
 	
 	# Connect signals
@@ -71,6 +77,15 @@ func _ready() -> void:
 	# Populate board with initial starting coins
 	_spawn_initial_board_coins()
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_save_game()
+
+func _save_game() -> void:
+	if current_score > high_score:
+		high_score = current_score
+	SaveManagerClass.save_game(current_coins, high_score, total_coins_won)
+
 func _process(delta: float) -> void:
 	if is_game_over or get_tree().paused:
 		return
@@ -87,9 +102,10 @@ func _process(delta: float) -> void:
 		if _recovery_timer >= recovery_interval:
 			_recovery_timer = 0.0
 			current_coins += 1
+			_save_game()
 			if hud:
 				hud.update_coins(current_coins, true)
-				hud.show_floating_text("+1 COIN (RECOVERY)", Color(0.3, 1.0, 0.6))
+				hud.show_recovery_notice(1)
 			if coin_shooter:
 				coin_shooter.set("can_fire", true)
 	else:
@@ -98,6 +114,7 @@ func _process(delta: float) -> void:
 	# Handle Pause input
 	if Input.is_action_just_pressed("ui_pause") or Input.is_action_just_pressed("btn_start"):
 		if pause_menu and not pause_menu.visible and game_over_menu and not game_over_menu.visible:
+			_save_game()
 			pause_menu.open_menu()
 
 func _on_coin_spawned_by_shooter(coin: Node3D) -> void:
@@ -110,6 +127,7 @@ func _on_coin_spawned_by_shooter(coin: Node3D) -> void:
 		hud.update_coins(current_coins)
 	
 	_register_coin(coin)
+	_save_game()
 	
 	# Cap management
 	_enforce_coin_cap()
@@ -144,6 +162,7 @@ func _on_coin_dropped(coin: Node3D, is_win: bool) -> void:
 		current_coins += gain_coins
 		current_score += gain_score
 		total_coins_won += gain_coins
+		_save_game()
 		
 		if hud:
 			hud.update_coins(current_coins, true)
@@ -192,7 +211,9 @@ func _spawn_initial_board_coins() -> void:
 		_register_coin(coin)
 
 func _restart_game() -> void:
+	_save_game()
 	get_tree().reload_current_scene()
 
 func _quit_game() -> void:
+	_save_game()
 	get_tree().quit()
