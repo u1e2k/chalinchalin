@@ -36,6 +36,18 @@ func show_game_over(final_score: int, total_coins_won: int) -> void:
 	await get_tree().process_frame
 	retry_btn.grab_focus()
 
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+		
+	# Explicit Accept fallback for controller A button
+	if event.is_action_pressed("action_accept") or event.is_action_pressed("btn_a") or event.is_action_pressed("ui_accept"):
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused is Button:
+			get_viewport().set_input_as_handled()
+			focused.emit_signal("pressed")
+			return
+
 func _on_button_focused() -> void:
 	SoundManagerClass.play(SoundManagerClass.SfxType.UI_FOCUS)
 

@@ -38,9 +38,20 @@ func close_menu() -> void:
 func _input(event: InputEvent) -> void:
 	if not visible:
 		return
-	if event.is_action_pressed("ui_pause") or event.is_action_pressed("btn_start") or event.is_action_pressed("action_cancel") or event.is_action_pressed("btn_b"):
+		
+	# Pause toggle or Cancel button to close
+	if event.is_action_pressed("ui_pause") or event.is_action_pressed("btn_start") or event.is_action_pressed("action_cancel") or event.is_action_pressed("btn_b") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		close_menu()
+		return
+		
+	# Explicit Accept fallback for controller A button
+	if event.is_action_pressed("action_accept") or event.is_action_pressed("btn_a") or event.is_action_pressed("ui_accept"):
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused is Button:
+			get_viewport().set_input_as_handled()
+			focused.emit_signal("pressed")
+			return
 
 func _on_button_focused() -> void:
 	SoundManagerClass.play(SoundManagerClass.SfxType.UI_FOCUS)

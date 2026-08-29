@@ -7,6 +7,10 @@ const SoundManagerClass = preload("res://scripts/SoundManager.gd")
 @export var initial_coins: int = 50
 @export var max_active_coins: int = 120
 
+# Coin Recovery System Settings
+@export var recovery_target: int = 25       # Recover coins up to this amount
+@export var recovery_interval: float = 3.5    # Interval in seconds per coin replenishment
+
 var current_coins: int = 50
 var current_score: int = 0
 var total_coins_won: int = 0
@@ -15,7 +19,7 @@ var combo_count: int = 0
 var combo_timer: float = 0.0
 
 var _active_coins: Array[Node3D] = []
-var _check_game_over_timer: float = 0.0
+var _recovery_timer: float = 0.0
 
 @onready var coin_shooter: Node3D = $CoinShooter
 @onready var coin_container: Node3D = $CoinContainer
@@ -77,17 +81,24 @@ func _process(delta: float) -> void:
 		if combo_timer <= 0.0:
 			combo_count = 0
 			
+	# Coin Recovery System (救済措置: コインが一定数未満なら一定時間ごとに自動補給)
+	if current_coins < recovery_target:
+		_recovery_timer += delta
+		if _recovery_timer >= recovery_interval:
+			_recovery_timer = 0.0
+			current_coins += 1
+			if hud:
+				hud.update_coins(current_coins, true)
+				hud.show_floating_text("+1 COIN (RECOVERY)", Color(0.3, 1.0, 0.6))
+			if coin_shooter:
+				coin_shooter.set("can_fire", true)
+	else:
+		_recovery_timer = 0.0
+			
 	# Handle Pause input
 	if Input.is_action_just_pressed("ui_pause") or Input.is_action_just_pressed("btn_start"):
 		if pause_menu and not pause_menu.visible and game_over_menu and not game_over_menu.visible:
 			pause_menu.open_menu()
-			
-	# Check Game Over condition when out of coins
-	if current_coins <= 0:
-		_check_game_over_timer += delta
-		if _check_game_over_timer >= 1.0:
-			_check_game_over_timer = 0.0
-			_evaluate_game_over()
 
 func _on_coin_spawned_by_shooter(coin: Node3D) -> void:
 	if current_coins <= 0:
@@ -156,11 +167,11 @@ func _on_coin_dropped(coin: Node3D, is_win: bool) -> void:
 		combo_count = 0
 
 func _spawn_initial_board_coins() -> void:
-	# Populate Lower Bed (Z: -0.8 to 1.6)
+	# Populate Lower Bed (Z: -0.7 to 0.95)
 	for i in range(28):
 		var coin: Node3D = coin_scene.instantiate()
-		var x := randf_range(-1.3, 1.3)
-		var z := randf_range(-0.8, 1.6)
+		var x := randf_range(-1.25, 1.25)
+		var z := randf_range(-0.7, 0.95)
 		var y := 0.05 + float(i % 2) * 0.08
 		coin.position = Vector3(x, y, z)
 		coin.rotation = Vector3(0, randf_range(0, TAU), 0)
@@ -179,24 +190,6 @@ func _spawn_initial_board_coins() -> void:
 		coin.position = Vector3(x, y, z)
 		coin.rotation = Vector3(0, randf_range(0, TAU), 0)
 		_register_coin(coin)
-
-func _evaluate_game_over() -> void:
-	if current_coins > 0 or is_game_over:
-		return
-		
-	# Check if any coin is still in motion
-	var moving := false
-	for coin in _active_coins:
-		if is_instance_valid(coin) and not coin.get("sleeping") and not coin.get("freeze"):
-			var vel: Vector3 = coin.get("linear_velocity") if coin.get("linear_velocity") != null else Vector3.ZERO
-			if vel.length_squared() > 0.05:
-				moving = true
-				break
-				
-	if not moving:
-		is_game_over = true
-		if game_over_menu:
-			game_over_menu.show_game_over(current_score, total_coins_won)
 
 func _restart_game() -> void:
 	get_tree().reload_current_scene()

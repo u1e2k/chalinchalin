@@ -72,11 +72,11 @@ func collect(is_win: bool) -> void:
 	if is_win:
 		# Ascend and sparkle effect
 		tween.tween_property(self, "scale", Vector3(1.4, 1.4, 1.4), 0.12)
-		tween.chain().tween_property(self, "scale", Vector3.ZERO, 0.18)
+		tween.chain().tween_property(self, "scale", Vector3(0.01, 0.01, 0.01), 0.18)
 		tween.tween_property(self, "global_position:y", global_position.y + 0.4, 0.3)
 	else:
 		# Fall and shrink
-		tween.tween_property(self, "scale", Vector3.ZERO, 0.25)
+		tween.tween_property(self, "scale", Vector3(0.01, 0.01, 0.01), 0.25)
 		tween.tween_property(self, "global_position:y", global_position.y - 0.5, 0.25)
 		
 	tween.chain().tween_callback(queue_free)

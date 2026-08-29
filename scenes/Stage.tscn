@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=22 format=3]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_stage"]
 friction = 0.45
@@ -16,10 +16,10 @@ metallic = 0.75
 roughness = 0.35
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lower_bed"]
-size = Vector3(3.2, 0.5, 3.4)
+size = Vector3(3.2, 0.5, 2.7)
 
 [sub_resource type="BoxMesh" id="BoxMesh_lower_bed"]
-size = Vector3(3.2, 0.5, 3.4)
+size = Vector3(3.2, 0.5, 2.7)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_back_wall"]
 size = Vector3(4.8, 2.0, 0.4)
@@ -39,40 +39,34 @@ size = Vector3(3.2, 0.2, 1.2)
 size = Vector3(3.2, 0.2, 1.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_side_wall"]
-size = Vector3(0.3, 1.8, 6.4)
+size = Vector3(0.3, 1.8, 5.8)
 
 [sub_resource type="BoxMesh" id="BoxMesh_side_wall"]
-size = Vector3(0.3, 1.8, 6.4)
+size = Vector3(0.3, 1.8, 5.8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_side_wall"]
 albedo_color = Color(0.15, 0.17, 0.22, 1)
 metallic = 0.8
 roughness = 0.3
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_gutter_slope"]
-size = Vector3(0.8, 0.3, 3.4)
-
 [sub_resource type="BoxMesh" id="BoxMesh_gutter_slope"]
-size = Vector3(0.8, 0.3, 3.4)
+size = Vector3(0.8, 0.3, 2.7)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gutter"]
 albedo_color = Color(0.06, 0.07, 0.1, 1)
 metallic = 0.4
 roughness = 0.6
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_front_chute"]
-size = Vector3(3.2, 0.3, 1.4)
-
 [sub_resource type="BoxMesh" id="BoxMesh_front_chute"]
-size = Vector3(3.2, 0.3, 1.4)
+size = Vector3(3.2, 0.2, 1.6)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_front_chute"]
-albedo_color = Color(0.9, 0.7, 0.1, 1)
+albedo_color = Color(0.95, 0.75, 0.1, 1)
 metallic = 0.9
 roughness = 0.2
 
 [sub_resource type="BoxMesh" id="BoxMesh_neon_bar"]
-size = Vector3(0.08, 0.08, 6.2)
+size = Vector3(0.08, 0.08, 5.6)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_neon_bar"]
 albedo_color = Color(1.0, 0.2, 0.6, 1)
@@ -109,11 +103,11 @@ mesh = SubResource("BoxMesh_upper_bed")
 surface_material_override/0 = SubResource("StandardMaterial3D_bed")
 
 [node name="LowerBedCollision" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.05)
 shape = SubResource("BoxShape3D_lower_bed")
 
 [node name="LowerBedMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -0.05)
 mesh = SubResource("BoxMesh_lower_bed")
 surface_material_override/0 = SubResource("StandardMaterial3D_bed")
 
@@ -136,57 +130,45 @@ mesh = SubResource("BoxMesh_back_slope")
 surface_material_override/0 = SubResource("StandardMaterial3D_back_wall")
 
 [node name="LeftWallCollision" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0.6, -0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0.6, -0.6)
 shape = SubResource("BoxShape3D_side_wall")
 
 [node name="LeftWallMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0.6, -0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0.6, -0.6)
 mesh = SubResource("BoxMesh_side_wall")
 surface_material_override/0 = SubResource("StandardMaterial3D_side_wall")
 
 [node name="RightWallCollision" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0.6, -0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0.6, -0.6)
 shape = SubResource("BoxShape3D_side_wall")
 
 [node name="RightWallMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0.6, -0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0.6, -0.6)
 mesh = SubResource("BoxMesh_side_wall")
 surface_material_override/0 = SubResource("StandardMaterial3D_side_wall")
 
-[node name="LeftGutterCollision" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.9659, -0.2588, 0, 0.2588, 0.9659, 0, 0, 0, 1, -1.95, -0.3, 0.3)
-shape = SubResource("BoxShape3D_gutter_slope")
-
 [node name="LeftGutterMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.9659, -0.2588, 0, 0.2588, 0.9659, 0, 0, 0, 1, -1.95, -0.3, 0.3)
+transform = Transform3D(0.9659, -0.2588, 0, 0.2588, 0.9659, 0, 0, 0, 1, -1.95, -0.3, -0.05)
 mesh = SubResource("BoxMesh_gutter_slope")
 surface_material_override/0 = SubResource("StandardMaterial3D_gutter")
-
-[node name="RightGutterCollision" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.9659, 0.2588, 0, -0.2588, 0.9659, 0, 0, 0, 1, 1.95, -0.3, 0.3)
-shape = SubResource("BoxShape3D_gutter_slope")
 
 [node name="RightGutterMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.9659, 0.2588, 0, -0.2588, 0.9659, 0, 0, 0, 1, 1.95, -0.3, 0.3)
+transform = Transform3D(0.9659, 0.2588, 0, -0.2588, 0.9659, 0, 0, 0, 1, 1.95, -0.3, -0.05)
 mesh = SubResource("BoxMesh_gutter_slope")
 surface_material_override/0 = SubResource("StandardMaterial3D_gutter")
 
-[node name="FrontChuteCollision" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.866, 0.5, 0, -0.5, 0.866, 0, -0.6, 2.5)
-shape = SubResource("BoxShape3D_front_chute")
-
 [node name="FrontChuteMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.866, 0.5, 0, -0.5, 0.866, 0, -0.6, 2.5)
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, -0.7, 1.95)
 mesh = SubResource("BoxMesh_front_chute")
 surface_material_override/0 = SubResource("StandardMaterial3D_front_chute")
 
 [node name="LeftNeon" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.15, 1.4, -0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.15, 1.4, -0.6)
 mesh = SubResource("BoxMesh_neon_bar")
 surface_material_override/0 = SubResource("StandardMaterial3D_neon_bar")
 
 [node name="RightNeon" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.15, 1.4, -0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.15, 1.4, -0.6)
 mesh = SubResource("BoxMesh_neon_bar")
 surface_material_override/0 = SubResource("StandardMaterial3D_neon_bar")
 
